@@ -1,11 +1,17 @@
+using Api.Services;
 using DataAccess;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder
+    .Services.AddOptionsWithValidateOnStart<S3Options>()
+    .Bind(builder.Configuration.GetSection(nameof(S3Options)))
+    .ValidateDataAnnotations();
+
 // Add services to the container.
+builder.Services.AddScoped<IStorage, S3Storage>();
 
 builder.Services.AddControllers();
 
@@ -19,7 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<AppDbContext>();
 
 var app = builder.Build();
 
@@ -29,7 +35,7 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureCreated();
 }
 
-app.MapIdentityApi<IdentityUser>();
+app.MapIdentityApi<User>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
