@@ -1,14 +1,13 @@
+import { useLoaderData } from "react-router";
+import { UploadApi } from "../api";
+
+export async function uploadsLoader() {
+  const result = await new UploadApi().apiUploadGet();
+  return result;
+}
+
 export default function UploadsPage() {
-  // Example static data
-  const uploads = [
-    { title: "Report Q1.pdf", timestamp: "2025-08-01 10:15", type: "PDF" },
-    { title: "Team Photo.jpg", timestamp: "2025-08-03 14:42", type: "Image" },
-    {
-      title: "Presentation.pptx",
-      timestamp: "2025-08-05 09:20",
-      type: "Presentation",
-    },
-  ];
+  const uploads = useLoaderData<typeof uploadsLoader>();
 
   return (
     <div className="min-h-screen bg-base-200 p-6">
@@ -22,17 +21,26 @@ export default function UploadsPage() {
           <table className="table w-full">
             <thead>
               <tr>
-                <th>Title</th>
+                <th className="w-full">Title</th>
                 <th>Timestamp</th>
                 <th>Type</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               {uploads.map((file, index) => (
                 <tr key={index}>
                   <td>{file.title}</td>
-                  <td>{file.timestamp}</td>
-                  <td>{file.type}</td>
+                  <td>{file.uploadedAt.toISOString()}</td>
+                  <td>{file.contentType}</td>
+                  <td>
+                    <a
+                      className="btn btn-secondary"
+                      href={"/api/upload/" + file.id}
+                    >
+                      Download
+                    </a>
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -1,7 +1,16 @@
-import { Link } from "react-router";
+import { Link, useLoaderData } from "react-router";
+import { ApiApi, type InfoResponse } from "../api";
+
+export async function homePageLoader() {
+  try {
+    return await new ApiApi().manageInfoGet();
+  } catch {
+    return null;
+  }
+}
 
 export function HomePage() {
-  const user = null as any;
+  const user = useLoaderData<typeof homePageLoader>();
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-200">
       <div className="card w-full max-w-sm shadow-2xl bg-base-100">

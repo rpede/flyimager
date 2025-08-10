@@ -1,11 +1,42 @@
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { ApiApi, type LoginRequest } from "../api";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
+
 export default function LoginPage() {
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginRequest>();
+
+  const onSubmit: SubmitHandler<LoginRequest> = async (data) => {
+    const promise = new ApiApi()
+      .loginPost({
+        loginRequest: data,
+        useCookies: true,
+      })
+      .catch((reason) => {
+        if ((reason?.message ?? "").startsWith("JSON.parse")) return null;
+        else throw reason;
+      });
+    await toast.promise(promise, {
+      success: "Login successful",
+      error: "Login failed",
+      loading: "Authenticating...",
+    });
+    navigate("/uploads");
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-200">
       <div className="card w-full max-w-sm shadow-2xl bg-base-100">
         <div className="card-body">
           <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
 
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Email</span>
@@ -13,9 +44,13 @@ export default function LoginPage() {
               <input
                 type="email"
                 placeholder="email@example.com"
-                className="input input-bordered"
                 required
+                className={`input input-bordered ${
+                  errors.email && "input-error"
+                }`}
+                {...register("email", { required: true })}
               />
+              <small className="text-error">{errors.email?.message}</small>
             </div>
 
             <div className="form-control mt-4">
@@ -25,14 +60,18 @@ export default function LoginPage() {
               <input
                 type="password"
                 placeholder="••••••••"
-                className="input input-bordered"
                 required
+                className={`input input-bordered ${
+                  errors.password && "input-error"
+                }`}
+                {...register("password", { required: true })}
               />
               <label className="label">
                 <a href="#" className="label-text-alt link link-hover">
                   Forgot password?
                 </a>
               </label>
+              <small className="text-error">{errors.email?.message}</small>
             </div>
 
             <div className="form-control mt-6">

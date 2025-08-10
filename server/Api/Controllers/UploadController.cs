@@ -10,7 +10,7 @@ namespace Api.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class UploadController(AppDbContext db, IStorage storage) : ControllerBase
 {
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -64,4 +64,3 @@ public class UploadController(AppDbContext db, IStorage storage) : ControllerBas
         return File(stream, contentType, key);
     }
 }
-
