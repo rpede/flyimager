@@ -1,5 +1,6 @@
 import { Link, useLoaderData } from "react-router";
 import { UploadApi } from "../api";
+import toast from "react-hot-toast";
 
 export async function uploadsLoader() {
   const result = await new UploadApi().uploadGet();
@@ -8,6 +9,12 @@ export async function uploadsLoader() {
 
 export default function UploadsPage() {
   const uploads = useLoaderData<typeof uploadsLoader>();
+
+  const shareLink = (id: string) => {
+    const link = `${location.origin}/api/upload/${id}`;
+    navigator.clipboard.writeText(link);
+    toast("Link copied to clipboard!");
+  };
 
   return (
     <div className="min-h-screen bg-base-200 p-6">
@@ -37,12 +44,12 @@ export default function UploadsPage() {
                   </td>
                   <td>
                     <button className="btn btn-error">Delete</button>
-                    <a
+                    <button
                       className="btn btn-primary ml-2"
-                      href={"/api/upload/" + file.id}
+                      onClick={() => shareLink(file.id)}
                     >
-                      Download
-                    </a>
+                      Share
+                    </button>
                   </td>
                 </tr>
               ))}
