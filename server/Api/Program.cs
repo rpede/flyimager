@@ -13,6 +13,7 @@ builder
 // Add services to the container.
 builder.Services.AddScoped<IStorageService, S3StorageService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IUploadService, UploadService>();
 
 builder.Services.AddControllers();
 
