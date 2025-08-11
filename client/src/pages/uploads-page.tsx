@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from "react-router";
+import { Link, useLoaderData, useNavigate } from "react-router";
 import { UploadApi } from "../api";
 import toast from "react-hot-toast";
 
@@ -8,12 +8,18 @@ export async function uploadsLoader() {
 }
 
 export default function UploadsPage() {
+  const navigate = useNavigate();
   const uploads = useLoaderData<typeof uploadsLoader>();
 
   const shareLink = (id: string) => {
     const link = `${location.origin}/api/upload/${id}`;
     navigator.clipboard.writeText(link);
     toast("Link copied to clipboard!");
+  };
+
+  const deleteFile = async (key: string) => {
+    await new UploadApi().uploadKeyDelete({ key });
+    navigate(".");
   };
 
   return (
@@ -43,7 +49,12 @@ export default function UploadsPage() {
                     {new Date(file.uploadedAt.toISOString()).toLocaleString()}
                   </td>
                   <td>
-                    <button className="btn btn-error">Delete</button>
+                    <button
+                      className="btn btn-error"
+                      onClick={() => deleteFile(file.id)}
+                    >
+                      Delete
+                    </button>
                     <button
                       className="btn btn-primary ml-2"
                       onClick={() => shareLink(file.id)}

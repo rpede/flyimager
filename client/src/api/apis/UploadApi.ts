@@ -22,6 +22,10 @@ import {
     FileDtoToJSON,
 } from '../models/index';
 
+export interface UploadAttachmentKeyGetRequest {
+    key: string;
+}
+
 export interface UploadKeyDeleteRequest {
     key: string;
 }
@@ -39,6 +43,36 @@ export interface UploadPostRequest {
  * 
  */
 export class UploadApi extends runtime.BaseAPI {
+
+    /**
+     */
+    async uploadAttachmentKeyGetRaw(requestParameters: UploadAttachmentKeyGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['key'] == null) {
+            throw new runtime.RequiredError(
+                'key',
+                'Required parameter "key" was null or undefined when calling uploadAttachmentKeyGet().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/Upload/attachment/{key}`.replace(`{${"key"}}`, encodeURIComponent(String(requestParameters['key']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async uploadAttachmentKeyGet(requestParameters: UploadAttachmentKeyGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.uploadAttachmentKeyGetRaw(requestParameters, initOverrides);
+    }
 
     /**
      */
