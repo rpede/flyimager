@@ -36,6 +36,7 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureCreated();
 }
 
+app.UsePathBase(new PathString("/api"));
 app.MapIdentityApi<User>();
 
 // Configure the HTTP request pipeline.

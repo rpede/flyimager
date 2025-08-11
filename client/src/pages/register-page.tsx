@@ -1,6 +1,6 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router";
-import { ApiApi, type LoginRequest } from "../api";
+import { ApiApi, type LoginRequest, type RegisterRequest } from "../api";
 import toast from "react-hot-toast";
 
 export default function RegisterPage() {
@@ -10,18 +10,12 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginRequest>();
+  } = useForm<RegisterRequest>();
 
-  const onSubmit: SubmitHandler<LoginRequest> = async (data) => {
-    const promise = new ApiApi()
-      .loginPost({
-        loginRequest: data,
-        useCookies: true,
-      })
-      .catch((reason) => {
-        if ((reason?.message ?? "").startsWith("JSON.parse")) return null;
-        else throw reason;
-      });
+  const onSubmit: SubmitHandler<RegisterRequest> = async (data) => {
+    const promise = new ApiApi().registerPost({
+      registerRequest: data,
+    });
     await toast.promise(promise, {
       success: "Registration successfully",
       error: "Registration failed",

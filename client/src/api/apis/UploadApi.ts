@@ -22,11 +22,15 @@ import {
     FileDtoToJSON,
 } from '../models/index';
 
-export interface ApiUploadKeyGetRequest {
+export interface UploadKeyDeleteRequest {
     key: string;
 }
 
-export interface ApiUploadPostRequest {
+export interface UploadKeyGetRequest {
+    key: string;
+}
+
+export interface UploadPostRequest {
     title?: string;
     file?: Blob;
 }
@@ -38,13 +42,13 @@ export class UploadApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiUploadGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<FileDto>>> {
+    async uploadGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<FileDto>>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/Upload`,
+            path: `/Upload`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -55,18 +59,18 @@ export class UploadApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiUploadGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<FileDto>> {
-        const response = await this.apiUploadGetRaw(initOverrides);
+    async uploadGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<FileDto>> {
+        const response = await this.uploadGetRaw(initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async apiUploadKeyGetRaw(requestParameters: ApiUploadKeyGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async uploadKeyDeleteRaw(requestParameters: UploadKeyDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['key'] == null) {
             throw new runtime.RequiredError(
                 'key',
-                'Required parameter "key" was null or undefined when calling apiUploadKeyGet().'
+                'Required parameter "key" was null or undefined when calling uploadKeyDelete().'
             );
         }
 
@@ -75,7 +79,37 @@ export class UploadApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/Upload/{key}`.replace(`{${"key"}}`, encodeURIComponent(String(requestParameters['key']))),
+            path: `/Upload/{key}`.replace(`{${"key"}}`, encodeURIComponent(String(requestParameters['key']))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async uploadKeyDelete(requestParameters: UploadKeyDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.uploadKeyDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async uploadKeyGetRaw(requestParameters: UploadKeyGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['key'] == null) {
+            throw new runtime.RequiredError(
+                'key',
+                'Required parameter "key" was null or undefined when calling uploadKeyGet().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/Upload/{key}`.replace(`{${"key"}}`, encodeURIComponent(String(requestParameters['key']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -86,13 +120,13 @@ export class UploadApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiUploadKeyGet(requestParameters: ApiUploadKeyGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiUploadKeyGetRaw(requestParameters, initOverrides);
+    async uploadKeyGet(requestParameters: UploadKeyGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.uploadKeyGetRaw(requestParameters, initOverrides);
     }
 
     /**
      */
-    async apiUploadPostRaw(requestParameters: ApiUploadPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async uploadPostRaw(requestParameters: UploadPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -122,7 +156,7 @@ export class UploadApi extends runtime.BaseAPI {
         }
 
         const response = await this.request({
-            path: `/api/Upload`,
+            path: `/Upload`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -134,8 +168,8 @@ export class UploadApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiUploadPost(requestParameters: ApiUploadPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiUploadPostRaw(requestParameters, initOverrides);
+    async uploadPost(requestParameters: UploadPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.uploadPostRaw(requestParameters, initOverrides);
     }
 
 }

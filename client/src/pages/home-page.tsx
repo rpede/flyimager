@@ -1,5 +1,5 @@
 import { Link, useLoaderData } from "react-router";
-import { ApiApi, type InfoResponse } from "../api";
+import { ApiApi } from "../api";
 
 export async function homePageLoader() {
   try {
@@ -19,11 +19,13 @@ export function HomePage() {
             Welcome to <span className="text-primary">Fly Imager</span>
           </h2>
           {user ? (
-            <Link to="/uploads">Show uploads</Link>
+            <Link to="/uploads" className="btn btn-primary">
+              Show uploads
+            </Link>
           ) : (
             <>
               <Link to="/register" className="btn btn-secondary">
-                Sign-up
+                Register
               </Link>
               <Link to="/login" className="btn btn-primary">
                 Login

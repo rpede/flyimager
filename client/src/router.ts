@@ -4,6 +4,7 @@ import { HomePage, homePageLoader } from "./pages/home-page";
 import LoginPage from "./pages/login-page";
 import RegisterPage from "./pages/register-page";
 import UploadsPage, { uploadsLoader } from "./pages/uploads-page";
+import { UploadCreatePage } from "./pages/upload-create-page";
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +28,15 @@ export const router = createBrowserRouter([
         path: "/uploads",
         Component: UploadsPage,
         loader: uploadsLoader,
+      },
+      {
+        path: "/uploads",
+        Component: UploadsPage,
+        loader: uploadsLoader,
+      },
+      {
+        path: "/uploads/create",
+        Component: UploadCreatePage,
       },
     ],
   },

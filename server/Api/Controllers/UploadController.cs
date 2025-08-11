@@ -10,14 +10,14 @@ namespace Api.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class UploadController(AppDbContext db, IStorageService storage, IImageService image)
     : ControllerBase
 {
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
     [HttpPost]
-    public async Task<IActionResult> UploadFile([FromForm] string title, IFormFile file)
+    public async Task<IActionResult> New([FromForm] string title, IFormFile file)
     {
         if (!file.ContentType.StartsWith("image/"))
         {
@@ -30,6 +30,7 @@ public class UploadController(AppDbContext db, IStorageService storage, IImageSe
             Length = file.Length,
             UserId = CurrentUserId!,
             ContentType = image.OutputContentType,
+            UploadedAt = DateTime.UtcNow,
         };
         await db.AddAsync(meta);
         await db.SaveChangesAsync();
@@ -40,7 +41,7 @@ public class UploadController(AppDbContext db, IStorageService storage, IImageSe
     }
 
     [HttpGet]
-    public IEnumerable<FileDto> GetUploads()
+    public IEnumerable<FileDto> List()
     {
         return db
             .Files.Where(x => x.UserId == CurrentUserId)
@@ -57,7 +58,7 @@ public class UploadController(AppDbContext db, IStorageService storage, IImageSe
 
     [AllowAnonymous]
     [HttpGet("{key}")]
-    public async Task<IActionResult> GetUpload(string key)
+    public async Task<IActionResult> Get(string key)
     {
         var contentType = await db
             .Files.Where(x => x.Id == key)
@@ -65,5 +66,14 @@ public class UploadController(AppDbContext db, IStorageService storage, IImageSe
             .SingleAsync();
         var stream = await storage.GetObjectAsync(key);
         return File(stream, contentType, key);
+    }
+
+    [HttpDelete("{key}")]
+    public async Task<IActionResult> Delete(string key)
+    {
+        var file = await db.Files.SingleAsync(x => x.UserId == CurrentUserId && x.Id == key);
+        db.Remove(file);
+        await db.SaveChangesAsync();
+        return NoContent();
     }
 }
