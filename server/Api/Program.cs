@@ -11,7 +11,8 @@ builder
     .ValidateDataAnnotations();
 
 // Add services to the container.
-builder.Services.AddScoped<IStorage, S3Storage>();
+builder.Services.AddScoped<IStorageService, S3StorageService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 builder.Services.AddControllers();
 

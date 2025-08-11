@@ -11,28 +11,31 @@ namespace Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class UploadController(AppDbContext db, IStorageService storage) : ControllerBase
+public class UploadController(AppDbContext db, IStorageService storage, IImageService image)
+    : ControllerBase
 {
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
     [HttpPost]
     public async Task<IActionResult> UploadFile([FromForm] string title, IFormFile file)
     {
+        if (!file.ContentType.StartsWith("image/"))
+        {
+            return BadRequest($"Unsupported Content-Type \"{file.ContentType}\"");
+        }
         var meta = new UploadedFile
         {
             Title = title,
             FileName = file.FileName,
-            ContentType = file.ContentType,
             Length = file.Length,
             UserId = CurrentUserId!,
+            ContentType = image.OutputContentType,
         };
         await db.AddAsync(meta);
         await db.SaveChangesAsync();
-        await using (var stream = file.OpenReadStream())
-        {
-            await storage.SaveAsync(meta.Id, stream);
-        }
-
+        await using var origStream = file.OpenReadStream();
+        using var processedStream = image.Process(origStream);
+        await storage.SaveAsync(meta.Id, processedStream);
         return Created();
     }
 
