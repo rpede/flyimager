@@ -1,20 +1,18 @@
-using Amazon.Runtime.Endpoints;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.Extensions.Options;
-using Endpoint = Amazon.Runtime.Endpoints.Endpoint;
 
 namespace Api.Services;
 
-public  class S3Options
+public class S3Options
 {
-    public  string AwsAccessKeyId { get; set; }
-    public  string AwsEndpointUrlS3 { get; set; }
-    public  string AwsSecretAccessKey { get; set; }
-    public  string BucketName { get; set; }
+    public string AwsAccessKeyId { get; set; } = null!;
+    public string AwsEndpointUrlS3 { get; set; } = null!;
+    public string AwsSecretAccessKey { get; set; } = null!;
+    public string BucketName { get; set; } = null!;
 }
 
-public interface IStorage
+public interface IStorageService
 {
     public Task<List<S3Bucket>> ListBucketsAsync();
     public Task<string> SaveAsync(string key, Stream content);
@@ -22,12 +20,12 @@ public interface IStorage
     public Task<List<S3Object>> ListObjectsAsync();
 }
 
-public class S3Storage : IStorage, IDisposable
+public class S3StorageService : IStorageService, IDisposable
 {
     private readonly string bucketName;
     private readonly IAmazonS3 s3Client;
 
-    public S3Storage(IOptions<S3Options> options)
+    public S3StorageService(IOptions<S3Options> options)
     {
         bucketName = options.Value.BucketName;
         s3Client = new AmazonS3Client(
@@ -36,7 +34,7 @@ public class S3Storage : IStorage, IDisposable
             new AmazonS3Config { ServiceURL = options.Value.AwsEndpointUrlS3, UseHttp = false }
         );
     }
-    
+
     public void Dispose()
     {
         s3Client.Dispose();
@@ -77,4 +75,3 @@ public class S3Storage : IStorage, IDisposable
         return response.S3Objects;
     }
 }
-

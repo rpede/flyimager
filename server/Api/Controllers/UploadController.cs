@@ -11,7 +11,7 @@ namespace Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class UploadController(AppDbContext db, IStorage storage) : ControllerBase
+public class UploadController(AppDbContext db, IStorageService storage) : ControllerBase
 {
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
