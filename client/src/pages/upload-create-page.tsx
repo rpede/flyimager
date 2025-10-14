@@ -11,7 +11,7 @@ export function UploadCreatePage() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { },
   } = useForm<FormFields>();
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
