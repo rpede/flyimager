@@ -14,7 +14,7 @@ public class UploadController(IUploadService service) : ControllerBase
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
     [HttpPost]
-    public async Task<IActionResult> Creat([FromForm] string title, IFormFile file)
+    public async Task<IActionResult> Create([FromForm] string title, IFormFile file)
     {
         if (!service.IsContentTypeSupported(file))
             return BadRequest($"{file.ContentType} is not supported");
@@ -37,7 +37,7 @@ public class UploadController(IUploadService service) : ControllerBase
 
     [AllowAnonymous]
     [HttpGet("attachment/{key}")]
-    public async Task<FileStreamResult> download(string key)
+    public async Task<FileStreamResult> Download(string key)
     {
         (string contentType, Stream stream) = await service.Get(key);
         return File(stream, contentType, key);

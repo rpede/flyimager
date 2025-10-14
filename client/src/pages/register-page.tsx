@@ -1,7 +1,7 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router";
-import { ApiApi, type LoginRequest, type RegisterRequest } from "../api";
 import toast from "react-hot-toast";
+import { Api, type RegisterRequest } from "../generated-client";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -13,9 +13,7 @@ export default function RegisterPage() {
   } = useForm<RegisterRequest>();
 
   const onSubmit: SubmitHandler<RegisterRequest> = async (data) => {
-    const promise = new ApiApi().registerPost({
-      registerRequest: data,
-    });
+    const promise = new Api({ baseUrl: "/api" }).register.registerCreate(data);
     await toast.promise(promise, {
       success: "Registration successfully",
       error: "Registration failed",
@@ -38,9 +36,8 @@ export default function RegisterPage() {
               <input
                 type="email"
                 placeholder="email@example.com"
-                className={`input input-bordered ${
-                  errors.email && "input-error"
-                }`}
+                className={`input input-bordered ${errors.email && "input-error"
+                  }`}
                 {...register("email", { required: true })}
               />
             </div>
@@ -53,9 +50,8 @@ export default function RegisterPage() {
               <input
                 type="password"
                 placeholder="••••••••"
-                className={`input input-bordered ${
-                  errors.password && "input-error"
-                }`}
+                className={`input input-bordered ${errors.password && "input-error"
+                  }`}
                 {...register("password", { required: true })}
               />
             </div>

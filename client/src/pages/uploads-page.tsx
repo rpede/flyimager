@@ -1,10 +1,10 @@
 import { Link, useLoaderData, useNavigate } from "react-router";
-import { UploadApi } from "../api";
 import toast from "react-hot-toast";
+import { Api } from "../generated-client";
 
 export async function uploadsLoader() {
-  const result = await new UploadApi().uploadGet();
-  return result;
+  const result = await (new Api({ baseUrl: "/api" }).upload.uploadList());
+  return result.data;
 }
 
 export default function UploadsPage() {
@@ -18,7 +18,7 @@ export default function UploadsPage() {
   };
 
   const deleteFile = async (key: string) => {
-    await new UploadApi().uploadKeyDelete({ key });
+    await new Api({ baseUrl: "/api" }).upload.uploadDelete(key);
     navigate(".");
   };
 
@@ -46,7 +46,7 @@ export default function UploadsPage() {
                 <tr key={index}>
                   <td>{file.title}</td>
                   <td>
-                    {new Date(file.uploadedAt.toISOString()).toLocaleString()}
+                    {new Date(file.uploadedAt).toLocaleString()}
                   </td>
                   <td>
                     <button

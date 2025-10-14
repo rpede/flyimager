@@ -1,7 +1,7 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
-import { UploadApi } from "../api";
 import toast from "react-hot-toast";
+import { Api } from "../generated-client";
 
 type FormFields = { title: string; file: FileList };
 
@@ -15,7 +15,7 @@ export function UploadCreatePage() {
   } = useForm<FormFields>();
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
-    const promise = new UploadApi().uploadPost({
+    const promise = new Api({ baseUrl: "/api" }).upload.uploadCreate({
       title: data.title,
       file: data.file[0],
     });

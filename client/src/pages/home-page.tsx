@@ -1,9 +1,9 @@
 import { Link, useLoaderData } from "react-router";
-import { ApiApi } from "../api";
+import { Api } from "../generated-client";
 
 export async function homePageLoader() {
   try {
-    return await new ApiApi().manageInfoGet();
+    return await new Api({ baseUrl: "/api" }).manage.infoList();
   } catch {
     return null;
   }

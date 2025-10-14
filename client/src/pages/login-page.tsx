@@ -1,7 +1,7 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { ApiApi, type LoginRequest } from "../api";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
+import { Api, type LoginRequest } from "../generated-client";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -13,11 +13,7 @@ export default function LoginPage() {
   } = useForm<LoginRequest>();
 
   const onSubmit: SubmitHandler<LoginRequest> = async (data) => {
-    const promise = new ApiApi()
-      .loginPost({
-        loginRequest: data,
-        useCookies: true,
-      })
+    const promise = new Api({ baseUrl: "/api" }).login.loginCreate(data, { useSessionCookies: true })
       .catch((reason) => {
         if ((reason?.message ?? "").startsWith("JSON.parse")) return null;
         else throw reason;
@@ -45,9 +41,7 @@ export default function LoginPage() {
                 type="email"
                 placeholder="email@example.com"
                 required
-                className={`input input-bordered ${
-                  errors.email && "input-error"
-                }`}
+                className={`input input-bordered ${errors.email && "input-error"}`}
                 {...register("email", { required: true })}
               />
               <small className="text-error">{errors.email?.message}</small>
@@ -61,9 +55,7 @@ export default function LoginPage() {
                 type="password"
                 placeholder="••••••••"
                 required
-                className={`input input-bordered ${
-                  errors.password && "input-error"
-                }`}
+                className={`input input-bordered ${errors.password && "input-error"}`}
                 {...register("password", { required: true })}
               />
               <label className="label">
